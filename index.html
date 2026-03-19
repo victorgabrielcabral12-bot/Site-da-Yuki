@@ -10,74 +10,112 @@
 <style>
 body {
   margin:0;
-  font-family: 'Segoe UI', sans-serif;
-  text-align:center;
-  background: linear-gradient(135deg,#ffe6f0,#e6f0ff);
-  transition:0.3s;
+  font-family:'Segoe UI',sans-serif;
+  background:linear-gradient(135deg,#ffd6e8,#d6e6ff);
 }
 
+/* HEADER */
 header {
-  background: linear-gradient(90deg,#ff4d88,#ff99cc);
+  background:linear-gradient(90deg,#ff4d88,#ff85a2);
   color:white;
   padding:15px;
-  border-radius:0 0 20px 20px;
+  text-align:center;
+  box-shadow:0 2px 10px rgba(0,0,0,0.2);
+}
+
+/* MENU */
+.menu {
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:10px;
+  padding:10px;
 }
 
 button {
   padding:10px 15px;
-  margin:5px;
-  border-radius:20px;
   border:none;
-  cursor:pointer;
+  border-radius:20px;
   background:#ff4d88;
   color:white;
+  cursor:pointer;
+  transition:0.2s;
 }
 
+button:hover {
+  transform:scale(1.05);
+  background:#ff2e73;
+}
+
+/* PAGE */
 .page {display:none;padding:20px;}
 .active {display:block;}
 
+/* CARD */
 .card {
   background:white;
   padding:15px;
-  margin:10px;
-  border-radius:15px;
-  box-shadow:0 4px 10px rgba(0,0,0,0.1);
+  margin:15px auto;
+  max-width:500px;
+  border-radius:20px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.1);
 }
 
-img {
-  max-width:90%;
+/* INPUT */
+input, textarea {
+  width:90%;
+  padding:10px;
+  margin:5px;
   border-radius:15px;
+  border:1px solid #ccc;
+  outline:none;
+}
+
+/* CHAT */
+.msg {
+  background:#ffe6f0;
+  padding:10px;
+  border-radius:15px;
+  margin:5px;
+  max-width:70%;
+}
+
+.msg-container {
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+}
+
+/* CARTAS */
+.carta {
+  background:#fff0f5;
+  border-left:5px solid #ff4d88;
+}
+
+/* DIARIO */
+.diario {
+  background:#f9f9ff;
+  border-left:5px solid #6a5acd;
 }
 
 /* LOGIN */
 #login {
   position:fixed;
-  top:0;left:0;
   width:100%;
   height:100%;
-  background:#fff;
+  background:white;
   display:flex;
   flex-direction:column;
   justify-content:center;
   align-items:center;
 }
-
-/* TEMAS */
-.red {background:#ffe6e6;}
-.blue {background:#e6f0ff;}
-.green {background:#e6ffe6;}
-.purple {background:#f3e6ff;}
-.dark {background:#222;color:white;}
-.light {background:white;color:black;}
-
 </style>
 </head>
 
-<body class="red">
+<body>
 
-<!-- LOGIN -->
 <div id="login">
-  <h2>Digite a senha ❤️</h2>
+  <h2>Senha ❤️</h2>
   <input type="password" id="senha">
   <button onclick="entrar()">Entrar</button>
 </div>
@@ -86,16 +124,15 @@ img {
 <h1>Vic ❤️ Yuki</h1>
 </header>
 
-<div>
+<div class="menu">
 <button onclick="showPage('home')">🏠</button>
 <button onclick="showPage('tempo')">⏳</button>
 <button onclick="showPage('recados')">💌</button>
-<button onclick="showPage('jogo')">🎮</button>
+<button onclick="showPage('diario')">📖</button>
 <button onclick="showPage('quiz')">🧠</button>
 <button onclick="showPage('chat')">💬</button>
 <button onclick="showPage('audio')">🎤</button>
 <button onclick="showPage('fotos')">📸</button>
-<button onclick="showPage('tema')">🎨</button>
 </div>
 
 <!-- HOME -->
@@ -107,138 +144,160 @@ img {
 </div>
 
 <!-- TEMPO -->
-<div id="tempo" class="page"><div class="card"><p id="contador"></p></div></div>
+<div id="tempo" class="page">
+<div class="card"><p id="contador"></p></div>
+</div>
 
-<!-- RECADOS -->
-<div id="recados" class="page"><div class="card">
-<button onclick="novoRecado()">Escrever</button>
+<!-- CARTAS -->
+<div id="recados" class="page">
+<div class="card">
+<textarea id="textoRecado"></textarea>
+<button onclick="novoRecado()">Enviar</button>
+</div>
 <div id="listaRecados"></div>
-</div></div>
+</div>
 
-<!-- JOGO -->
-<div id="jogo" class="page"><div class="card">
-<button onclick="clicar()">💖 Clique</button>
-<p id="placar"></p>
-</div></div>
+<!-- DIARIO -->
+<div id="diario" class="page">
+<div class="card">
+<textarea id="textoDiario"></textarea>
+<button onclick="salvarDiario()">Salvar</button>
+</div>
+<div id="listaDiario"></div>
+</div>
 
 <!-- QUIZ -->
-<div id="quiz" class="page"><div class="card">
-<button onclick="novaPergunta()">Adicionar pergunta</button>
-<p>Pontos: <span id="pontos">0</span></p>
+<div id="quiz" class="page">
+<div class="card">
+<input id="pergunta" placeholder="Pergunta">
+<input id="resposta" placeholder="Resposta">
+<button onclick="novaPergunta()">Adicionar</button>
+</div>
 <div id="listaQuiz"></div>
-</div></div>
+</div>
 
 <!-- CHAT -->
-<div id="chat" class="page"><div class="card">
+<div id="chat" class="page">
+<div class="card">
 <input id="msg">
 <button onclick="enviarMsg()">Enviar</button>
-<div id="msgs"></div>
-</div></div>
+</div>
+<div id="msgs" class="msg-container"></div>
+</div>
 
 <!-- AUDIO -->
-<div id="audio" class="page"><div class="card">
-<button onclick="gravar()">🎤 Gravar áudio</button>
+<div id="audio" class="page">
+<div class="card">
+<button onclick="gravar()">Gravar áudio</button>
+</div>
 <div id="audios"></div>
-</div></div>
+</div>
 
 <!-- FOTOS -->
-<div id="fotos" class="page"><div class="card">
-<button onclick="addFoto()">Adicionar foto</button>
+<div id="fotos" class="page">
+<div class="card">
+<input id="fotoUrl">
+<button onclick="addFoto()">Adicionar</button>
+</div>
 <div id="galeria"></div>
-</div></div>
-
-<!-- TEMA -->
-<div id="tema" class="page"><div class="card">
-<button onclick="setTema('red')">Vermelho</button>
-<button onclick="setTema('blue')">Azul</button>
-<button onclick="setTema('green')">Verde</button>
-<button onclick="setTema('purple')">Roxo</button>
-<button onclick="setTema('dark')">Escuro</button>
-<button onclick="setTema('light')">Claro</button>
-</div></div>
+</div>
 
 <script>
-const firebaseConfig = {
-  apiKey:"SUA_API_KEY",
-  authDomain:"SEU_DOMINIO",
-  databaseURL:"SUA_DATABASE_URL",
-  projectId:"SEU_ID"
+const firebaseConfig={
+apiKey:"SUA_API_KEY",
+authDomain:"SEU_DOMINIO",
+databaseURL:"SUA_DATABASE_URL",
+projectId:"SEU_ID"
 };
-
-const app = firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+firebase.initializeApp(firebaseConfig);
+const db=firebase.database();
 
 /* LOGIN */
 function entrar(){
-  let s = document.getElementById("senha").value;
-  if(s==="20102512"){
-    document.getElementById("login").style.display="none";
-  } else alert("Senha errada");
+if(senha.value==="20102512") login.style.display="none";
+else alert("Senha errada");
 }
 
 /* NAV */
 function showPage(id){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+document.getElementById(id).classList.add('active');
 }
 
 /* TEMPO */
 const inicio=new Date("2024-01-01");
 setInterval(()=>{
-let d=Math.floor((new Date()-inicio)/(1000*60*60*24));
-contador.innerText=d+" dias 💕";
+contador.innerText=Math.floor((new Date()-inicio)/(1000*60*60*24))+" dias 💕";
 },1000);
 
 /* AMOR */
 function mandarAmor(){db.ref("amor").set("❤️ Eu te amo!");}
 db.ref("amor").on("value",s=>{if(s.exists())alert(s.val());});
 
-/* RECADOS */
+/* CARTAS */
 function novoRecado(){
-let t=prompt("Recado:");
-if(t)db.ref("recados").push(t);
+if(textoRecado.value){
+db.ref("recados").push(textoRecado.value);
+textoRecado.value="";
+}
 }
 db.ref("recados").on("value",s=>{
 listaRecados.innerHTML="";
-s.forEach(c=>listaRecados.innerHTML+="<p>"+c.val()+"</p>");
+s.forEach(c=>{
+listaRecados.innerHTML+=`<div class="card carta">${c.val()}</div>`;
+});
 });
 
-/* JOGO */
-function clicar(){db.ref("clicks").transaction(n=>(n||0)+1);}
-db.ref("clicks").on("value",s=>placar.innerText="Cliques: "+s.val());
+/* DIARIO */
+function salvarDiario(){
+if(textoDiario.value){
+db.ref("diario").push(textoDiario.value);
+textoDiario.value="";
+}
+}
+db.ref("diario").on("value",s=>{
+listaDiario.innerHTML="";
+s.forEach(c=>{
+listaDiario.innerHTML+=`<div class="card diario">${c.val()}</div>`;
+});
+});
 
 /* QUIZ */
-let pontos=0;
 function novaPergunta(){
-let p=prompt("Pergunta:");
-let r=prompt("Resposta:");
-if(p&&r)db.ref("quiz").push({p,r});
+if(pergunta.value && resposta.value){
+db.ref("quiz").push({p:pergunta.value,r:resposta.value});
+pergunta.value="";resposta.value="";
+}
 }
 db.ref("quiz").on("value",s=>{
 listaQuiz.innerHTML="";
 s.forEach(c=>{
 let q=c.val();
 listaQuiz.innerHTML+=`
+<div class="card">
 <p>${q.p}</p>
-<button onclick="resp('${q.r}')">Responder</button>`;
+<button onclick="responder('${q.r}')">Responder</button>
+</div>`;
 });
 });
-function resp(r){
+function responder(r){
 let u=prompt("Resposta:");
-if(u==r){pontos++;alert("Acertou ❤️");}
-else alert("Errou 😢");
-document.getElementById("pontos").innerText=pontos;
+if(u==r) alert("Acertou ❤️");
+else alert("Resposta: "+r);
 }
 
 /* CHAT */
 function enviarMsg(){
-let m=msg.value;
-if(m)db.ref("chat").push(m);
+if(msg.value){
+db.ref("chat").push(msg.value);
 msg.value="";
+}
 }
 db.ref("chat").on("value",s=>{
 msgs.innerHTML="";
-s.forEach(c=>msgs.innerHTML+="<p>"+c.val()+"</p>");
+s.forEach(c=>{
+msgs.innerHTML+=`<div class="msg">${c.val()}</div>`;
+});
 });
 
 /* AUDIO */
@@ -248,7 +307,7 @@ let stream=await navigator.mediaDevices.getUserMedia({audio:true});
 mediaRecorder=new MediaRecorder(stream);
 let chunks=[];
 mediaRecorder.ondataavailable=e=>chunks.push(e.data);
-mediaRecorder.onstop=e=>{
+mediaRecorder.onstop=()=>{
 let blob=new Blob(chunks);
 let url=URL.createObjectURL(blob);
 db.ref("audios").push(url);
@@ -256,26 +315,22 @@ db.ref("audios").push(url);
 mediaRecorder.start();
 setTimeout(()=>mediaRecorder.stop(),3000);
 }
-
 db.ref("audios").on("value",s=>{
 audios.innerHTML="";
-s.forEach(c=>{
-audios.innerHTML+=`<audio controls src="${c.val()}"></audio>`;
-});
+s.forEach(c=>audios.innerHTML+=`<audio controls src="${c.val()}"></audio>`);
 });
 
 /* FOTOS */
 function addFoto(){
-let u=prompt("Link:");
-if(u)db.ref("fotos").push(u);
+if(fotoUrl.value){
+db.ref("fotos").push(fotoUrl.value);
+fotoUrl.value="";
+}
 }
 db.ref("fotos").on("value",s=>{
 galeria.innerHTML="";
 s.forEach(c=>galeria.innerHTML+=`<img src="${c.val()}">`);
 });
-
-/* TEMAS */
-function setTema(t){document.body.className=t;}
 </script>
 
 </body>
